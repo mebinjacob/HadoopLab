@@ -48,7 +48,7 @@ public class RedLinkRemoverMapper extends
 			}
 
 			// remove one title in the reducer
-			context.write(new Text(title), new Text(title));
+			context.write(new Text(title), new Text("==="));
 
 			for (String outlink : outlinkSet) {
 				context.write(new Text(outlink), new Text(title));
