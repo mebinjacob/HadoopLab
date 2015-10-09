@@ -8,7 +8,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -16,10 +15,10 @@ import org.apache.hadoop.util.ToolRunner;
 
 import edu.ufl.ds.parser.XmlInputFormat;
 
-public class RedLink extends Configured implements Tool {
+public class RedLinkRemover extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
-		int res = ToolRunner.run(new Configuration(), new RedLink(), args);
+		int res = ToolRunner.run(new Configuration(), new RedLinkRemover(), args);
 		System.exit(res);
 	}
 
@@ -31,32 +30,27 @@ public class RedLink extends Configured implements Tool {
 			conf.set("xmlinput.end", "</page>");
 			conf.set("io.serializations",
 					"org.apache.hadoop.io.serializer.JavaSerialization,org.apache.hadoop.io.serializer.WritableSerialization");
-
 			Job job = Job.getInstance(conf);
-			job.setJarByClass(RedLink.class);
+			job.setJarByClass(RedLinkRemover.class);
 
-			// specify a mapper
-			job.setMapperClass(RedLinkMapper.class);
+			job.setMapperClass(RedLinkRemoverMapper.class);
 
-			// specify a reducer
-			job.setReducerClass(RedLinkReducer.class);
+			job.setReducerClass(RedLinkRemoverReducer.class);
 
-			// specify output types
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
 
 			// specify input and output DIRECTORIES
 			FileInputFormat.addInputPath(job, new Path(args[0]));
-			// job.setInputFormatClass(TextInputFormat.class);
+
 			job.setInputFormatClass(XmlInputFormat.class);
 
 			FileOutputFormat.setOutputPath(job, new Path(args[1]));
+			
 			job.setOutputFormatClass(TextOutputFormat.class);
 
 			if (job.waitForCompletion(true)) {
-				return inlinkToOutlinkJob(args[1],
-						"src/main/resources/output_task_2") ? 0 : 1;
-
+				return 0;
 			} else {
 				return 1;
 			}
@@ -67,32 +61,4 @@ public class RedLink extends Configured implements Tool {
 		}
 	}
 
-	public static boolean inlinkToOutlinkJob(String inputPath, String outputPath)
-			throws IOException, ClassNotFoundException, InterruptedException {
-		Configuration conf = new Configuration();
-
-		Job job = Job.getInstance(conf);
-		job.setJarByClass(RedLink.class);
-
-		// specify a mapper
-		job.setMapperClass(InlinkToOutlinkMapper.class);
-
-		// specify a reducer
-		job.setReducerClass(InlinkToOutlinkReducer.class);
-
-		// specify output types
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-
-		// specify input and output DIRECTORIES
-		FileInputFormat.addInputPath(job, new Path(inputPath));
-		// job.setInputFormatClass(TextInputFormat.class);
-		job.setInputFormatClass(TextInputFormat.class);
-
-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
-		job.setOutputFormatClass(TextOutputFormat.class);
-
-		return job.waitForCompletion(true);
-
-	}
 }
