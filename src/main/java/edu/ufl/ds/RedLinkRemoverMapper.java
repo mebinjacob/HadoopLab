@@ -18,7 +18,8 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
-public class RedLinkRemoverMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class RedLinkRemoverMapper extends
+		Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable key, Text value1, Context context)
@@ -32,32 +33,33 @@ public class RedLinkRemoverMapper extends Mapper<LongWritable, Text, Text, Text>
 			Set<String> outlinkSet = new HashSet<String>();
 			Document doc = builder.build(in);
 			Element root = doc.getRootElement();
-			
-			String title = root.getChild("title").getTextTrim().replace(" ", "_");
-			String text = root.getChild("revision").getChild("text").getTextTrim();
-			
+
+			String title = root.getChild("title").getTextTrim()
+					.replace(" ", "_");
+			String text = root.getChild("revision").getChild("text")
+					.getTextTrim();
+
 			String pattern = "\\[\\[(.*?)\\]\\]";
 			Pattern r = Pattern.compile(pattern);
 			Matcher m = r.matcher(text);
-			
+
 			while (m.find()) {
 				outlinkSet.add(m.group(1).split("\\|")[0].replace(" ", "_"));
 			}
 
-			
-			//remove one title in the reducer
+			// remove one title in the reducer
 			context.write(new Text(title), new Text(title));
-			
+
 			for (String outlink : outlinkSet) {
 				context.write(new Text(outlink), new Text(title));
 			}
 
 		} catch (JDOMException ex) {
-			Logger.getLogger(RedLinkRemoverMapper.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Logger.getLogger(RedLinkRemoverMapper.class.getName()).log(
+					Level.SEVERE, null, ex);
 		} catch (IOException ex) {
-			Logger.getLogger(RedLinkRemoverMapper.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Logger.getLogger(RedLinkRemoverMapper.class.getName()).log(
+					Level.SEVERE, null, ex);
 		}
 
 	}
