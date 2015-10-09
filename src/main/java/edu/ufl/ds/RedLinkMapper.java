@@ -1,4 +1,4 @@
-package deadLinks;
+package edu.ufl.ds;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -20,7 +20,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
-public class DeadLinkMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class RedLinkMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable key, Text value1, Context context)
@@ -38,10 +38,6 @@ public class DeadLinkMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String title = root.getChild("title").getTextTrim();
 			String text = root.getChild("revision").getChild("text")
 					.getTextTrim();
-
-			if (title.equals("Anarchism")) {
-				System.out.println(title);
-			}
 			String pattern = "\\[\\[(.*?)\\]\\]";
 			context.write(new Text(title.replace(" ", "_")), new Text("==="));
 			// Create a Pattern object
@@ -57,10 +53,10 @@ public class DeadLinkMapper extends Mapper<LongWritable, Text, Text, Text> {
 			List<String> links = new ArrayList<String>();
 
 		} catch (JDOMException ex) {
-			Logger.getLogger(DeadLinkMapper.class.getName()).log(Level.SEVERE,
+			Logger.getLogger(RedLinkMapper.class.getName()).log(Level.SEVERE,
 					null, ex);
 		} catch (IOException ex) {
-			Logger.getLogger(DeadLinkMapper.class.getName()).log(Level.SEVERE,
+			Logger.getLogger(RedLinkMapper.class.getName()).log(Level.SEVERE,
 					null, ex);
 		}
 

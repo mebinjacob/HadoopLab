@@ -1,4 +1,4 @@
-package deadLinks;
+package edu.ufl.ds;
 
 import java.io.IOException;
 

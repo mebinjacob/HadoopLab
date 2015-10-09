@@ -1,4 +1,4 @@
-package deadLinks;
+package edu.ufl.ds;
 
 import java.io.IOException;
 
@@ -14,12 +14,12 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import parser.XmlInputFormat;
+import edu.ufl.ds.parser.XmlInputFormat;
 
-public class DeadLink extends Configured implements Tool {
+public class RedLink extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
-		int res = ToolRunner.run(new Configuration(), new DeadLink(), args);
+		int res = ToolRunner.run(new Configuration(), new RedLink(), args);
 		System.exit(res);
 	}
 
@@ -29,18 +29,17 @@ public class DeadLink extends Configured implements Tool {
 
 			conf.set("xmlinput.start", "<page>");
 			conf.set("xmlinput.end", "</page>");
-			conf.set(
-					"io.serializations",
+			conf.set("io.serializations",
 					"org.apache.hadoop.io.serializer.JavaSerialization,org.apache.hadoop.io.serializer.WritableSerialization");
 
 			Job job = Job.getInstance(conf);
-			job.setJarByClass(DeadLink.class);
+			job.setJarByClass(RedLink.class);
 
 			// specify a mapper
-			job.setMapperClass(DeadLinkMapper.class);
+			job.setMapperClass(RedLinkMapper.class);
 
 			// specify a reducer
-			job.setReducerClass(DeadLinkReducer.class);
+			job.setReducerClass(RedLinkReducer.class);
 
 			// specify output types
 			job.setOutputKeyClass(Text.class);
@@ -73,7 +72,7 @@ public class DeadLink extends Configured implements Tool {
 		Configuration conf = new Configuration();
 
 		Job job = Job.getInstance(conf);
-		job.setJarByClass(DeadLink.class);
+		job.setJarByClass(RedLink.class);
 
 		// specify a mapper
 		job.setMapperClass(InlinkToOutlinkMapper.class);

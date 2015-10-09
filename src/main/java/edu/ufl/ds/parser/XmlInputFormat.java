@@ -1,4 +1,4 @@
-package parser;
+package edu.ufl.ds.parser;
 
 import java.io.IOException;
 import org.apache.hadoop.fs.FSDataInputStream;
