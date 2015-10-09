@@ -14,7 +14,10 @@ public class InlinkToOutlinkMapper extends
 		String[] titles = value.toString().split(" ");
 		String val = titles[0];
 		if (titles.length == 1) {
-			context.write(new Text(val.trim()), new Text("---"));
+			context.write(new Text(val.trim()), new Text(""));
+		}
+		if (val.trim().equals("===")) {
+			val = "";
 		}
 		for (int i = 1; i < titles.length; i++) {
 			context.write(new Text(titles[i]), new Text(val));
